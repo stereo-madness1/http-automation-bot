@@ -74,7 +74,7 @@ When you launch the script, the interactive terminal interface will guide you th
 ## Author
 
 * **~evin**
-* **@stereo_madness1** (Instagram)
+* **https://instagram.com/stereo_madness1** (Instagram)
 
 ---
 
