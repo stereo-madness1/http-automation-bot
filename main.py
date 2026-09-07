@@ -18,7 +18,7 @@ MUTED = "\033[38;5;242m"     # Slate Gray
 def get_terminal_width():
     try:
         columns, _ = shutil.get_terminal_size(fallback=(80, 24))
- except Exception:
+    except Exception:
         columns = 80
     return min(columns, 60)  # Cap width for optimal mobile/Termux readability
 
@@ -31,9 +31,10 @@ def print_banner():
     line = "═" * width
     
     print(f"{PRIMARY}{line}{RESET}")
-    print(f"{BOLD}{ACCENT}       HTTP AUTOMATION BOT         {RESET}".center(wi>
-    print(f"{DIM}           Made by stereo_madness1            {RESET}".center(>
+    print(f"{BOLD}{ACCENT}        HTTP AUTOMATION ENGINE         {RESET}".center(width + len(ACCENT) + len(BOLD) + len(RESET)))
+    print(f"{DIM}           Made by stereo_madness1            {RESET}".center(width + len(DIM) + len(RESET)))
     print(f"{PRIMARY}{line}{RESET}\n")
+
 def get_user_inputs():
     print_banner()
     width = get_terminal_width()
@@ -46,29 +47,34 @@ def get_user_inputs():
     print(f"\n{WARNING} [ TIMING & FREQUENCY ]{RESET}")
     while True:
         try:
-            interval_min = float(input(f"   {PRIMARY}Interval in minutes (Min: >
+            interval_min = float(input(f"   {PRIMARY}Interval in minutes (Min: 1):{RESET} "))
             if interval_min < 1:
-                print(f"   {DANGER}[-] Error: Interval cannot be below 1 minute>
+                print(f"   {DANGER}[-] Error: Interval cannot be below 1 minute.{RESET}")
                 continue
             break
         except ValueError:
             print(f"   {DANGER}[-] Please enter a valid number.{RESET}")
- interval_seconds = interval_min * 60
 
-    count_input = input(f"   {PRIMARY}Total runs (Enter count or 'inf'):{RESET}>
+    interval_seconds = interval_min * 60
+
+    count_input = input(f"   {PRIMARY}Total runs (Enter count or 'inf'):{RESET} ").strip().lower()
     if count_input == 'inf' or count_input == '':
         total_runs = float('inf')
     else:
         try:
             total_runs = int(count_input)
         except ValueError:
-            print(f"   {WARNING}[!] Invalid input. Defaulting to indefinite.{RE>
+            print(f"   {WARNING}[!] Invalid input. Defaulting to indefinite.{RESET}")
             total_runs = float('inf')
 
     print(f"\n{WARNING} [ SCHEDULE OPTIONS ]{RESET}")
-    future_input = input(f"   {PRIMARY}Execution mode (now / delay):{RESET} ").>
+    future_input = input(f"   {PRIMARY}Execution mode (now / delay):{RESET} ").strip().lower()
     start_delay_seconds = 0
-except ValueError:
+    if future_input.startswith('delay') or future_input == 'future':
+        try:
+            delay_min = float(input(f"   {PRIMARY}Delay before starting (minutes):{RESET} "))
+            start_delay_seconds = delay_min * 60
+        except ValueError:
             print(f"   {DANGER}[!] Invalid delay. Starting immediately.{RESET}")
 
     return url, interval_seconds, total_runs, start_delay_seconds
@@ -78,18 +84,19 @@ def main():
     
     session = requests.Session()
     session.headers.update({
-        "User-Agent": "Mozilla/5.0 (Android; Mobile; rv:109.0) Gecko/110.0 Fire>
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=>
+        "User-Agent": "Mozilla/5.0 (Android; Mobile; rv:109.0) Gecko/110.0 Firefox/110.0",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
     })
 
     print_banner()
     width = get_terminal_width()
-     if start_delay > 0:
+
+    if start_delay > 0:
         target_start_time = datetime.now() + timedelta(seconds=start_delay)
-        print(f"{WARNING}[⏰] Scheduled! Task will launch at {target_start_time>
+        print(f"{WARNING}[⏰] Scheduled! Task will launch at {target_start_time.strftime('%H:%M:%S')}{RESET}")
         time.sleep(start_delay)
 
-    mode_text = 'Indefinite Loop' if total_runs == float('inf') else f'{int(tot>
+    mode_text = 'Indefinite Loop' if total_runs == float('inf') else f'{int(total_runs)} Total Runs'
     
     print(f"{SUCCESS}──────────────────────────────────────────────{RESET}")
     print(f"{SUCCESS} STATUS: ACTIVE & RUNNING{RESET}")
@@ -106,41 +113,40 @@ def main():
         while run_count < total_runs:
             run_count += 1
             timestamp = datetime.now().strftime('%H:%M:%S')
-            run_label = f"#{run_count}" if total_runs != float('inf') else f"#{>
-
-            print(f"{PRIMARY}[{timestamp}] Dispatching Request {run_label}{RESE>
-
+            run_label = f"#{run_count}" if total_runs != float('inf') else f"#{run_count} (Loop)"
+            
+            print(f"{PRIMARY}[{timestamp}] Dispatching Request {run_label}{RESET}")
+            
             try:
                 start_t = time.time()
                 response = session.get(url, timeout=20)
                 elapsed = time.time() - start_t
-
+                
                 if response.status_code == 200:
                     status_str = f"{SUCCESS}200 OK{RESET}"
-                     success_count += 1
-
+                else:
+                    status_str = f"{WARNING}{response.status_code} WARN{RESET}"
+                success_count += 1
+                    
                 print(f" ├── Status : {status_str}")
                 print(f" ├── Latency: {PRIMARY}{elapsed:.2f}s{RESET}")
-                print(f" └── Size   : {MUTED}{len(response.content)} bytes{RESE>
+                print(f" └── Size   : {MUTED}{len(response.content)} bytes{RESET}")
             except requests.exceptions.RequestException as e:
                 fail_count += 1
                 print(f" └── {DANGER}Failed : {e}{RESET}")
 
-            print(f" {DIM}📊 Stats -> Success: {success_count} | Failed: {fail_>
+            print(f" {DIM}📊 Stats -> Success: {success_count} | Failed: {fail_count}{RESET}")
 
             if run_count >= total_runs:
-                print(f"\n{SUCCESS}[✔] Target run count completed successfully.>
+                print(f"\n{SUCCESS}[✔] Target run count completed successfully.{RESET}")
                 break
 
-            print(f" {ACCENT}⏳ Cooling down for {interval / 60} min(s)...{RESE>
+            print(f" {ACCENT}⏳ Cooling down for {interval / 60} min(s)...{RESET}\n")
             time.sleep(interval)
-             except KeyboardInterrupt:
-        print(f"\n\n{DANGER}[!] Process terminated by user. Exiting safely.{RES>
+
+    except KeyboardInterrupt:
+        print(f"\n\n{DANGER}[!] Process terminated by user. Exiting safely.{RESET}")
         sys.exit(0)
 
 if __name__ == "__main__":
-    main() 
-
-
-
-
+    main()
