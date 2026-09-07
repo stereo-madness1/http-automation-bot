@@ -1,4 +1,4 @@
-# HTTP Automation Bot (ALTHIUS Edition)
+# HTTP Automation Bot (V2)
 
 > A lightweight, zero-browser Python terminal automation tool designed specifically for Termux and Linux environments.
 
