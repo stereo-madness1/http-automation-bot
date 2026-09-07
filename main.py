@@ -31,7 +31,7 @@ def print_banner():
     line = "═" * width
     
     print(f"{PRIMARY}{line}{RESET}")
-    print(f"{BOLD}{ACCENT}        HTTP AUTOMATION BOT        {RESET}".center(width + len(ACCENT) + len(BOLD) + len(RESET)))
+    print(f"{BOLD}{ACCENT}       HTTP AUTOMATION BOT        {RESET}".center(width + len(ACCENT) + len(BOLD) + len(RESET)))
     print(f"{DIM}           Made by stereo_madness1            {RESET}".center(width + len(DIM) + len(RESET)))
     print(f"{PRIMARY}{line}{RESET}\n")
 
