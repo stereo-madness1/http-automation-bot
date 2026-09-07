@@ -33,7 +33,7 @@ Follow these steps to set up and run the bot directly on your Android device usi
     ```
 4. **Clone the repository:**
     ```bash
-    git clone https://github.com/stereo-madness-1/http-automation-bot.git
+    git clone https://github.com/stereo-madness1/http-automation-bot.git
     ```
 5. **Navigate into the project directory:**
     ```bash
