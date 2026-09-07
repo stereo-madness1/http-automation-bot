@@ -35,23 +35,23 @@ Follow these steps to set up and run the bot directly on your Android device usi
     ```bash
     git clone https://github.com/stereo-madness1/http-automation-bot.git
     ```
-5. **Creating a Virtual Environment**
-   ```python
-   python3 -m venv .venv
-   ```
-6. **Activating the Virtual Environment**
-    ```python
-    source .venv/bin/activate
-    ```
 5. **Navigate into the project directory:**
     ```bash
     cd http-automation-bot
     ```
-6. **Install the required dependencies:**
+6. **Creating a Virtual Environment**
+   ```python
+   python3 -m venv .venv
+   ```
+7. **Activating the Virtual Environment**
+    ```python
+    source .venv/bin/activate
+    ```
+8. **Install the required dependencies:**
     ```pip
     pip install -r requirements.txt
     ```
-7. **Run the automation bot:**
+9. **Run the automation bot:**
     ```python
     python main.py
     ```
